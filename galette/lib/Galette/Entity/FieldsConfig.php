@@ -718,9 +718,9 @@ class FieldsConfig
                         'visible'   => $field['visible'],
                         'position'  => $pos,
                         FieldsCategories::PK => $field['category'],
-                        'where1'    => $field['field_id']
+                        'field_id'  => $field['field_id']
                     );
-                    $stmt->execute($params);
+                    $stmt->execute(array_values($params));
                 }
             }
 
@@ -799,13 +799,14 @@ class FieldsConfig
             $stmt = $this->zdb->sql->prepareStatementForSqlObject($update);
 
             foreach ($old_required as $or) {
-                /** Why where parameter is named where1 ?? */
                 $stmt->execute(
-                    array(
-                        'required'  => ($or->required === false) ?
-                            ($this->zdb->isPostgres() ? 'false' : 0) :
-                            true,
-                        'where1'    => $or->field_id
+                    array_values(
+                        array(
+                            'required'  => ($or->required === false) ?
+                                ($this->zdb->isPostgres() ? 'false' : 0) :
+                                true,
+                            'field_id'  => $or->field_id
+                        )
                     )
                 );
             }
@@ -862,13 +863,15 @@ class FieldsConfig
         $stmt = $this->zdb->sql->prepareStatementForSqlObject($insert);
         foreach ($values as $d) {
             $stmt->execute(
-                array(
-                    'field_id'      => $d['field_id'],
-                    'table_name'    => $d['table_name'],
-                    'required'      => $d['required'],
-                    'visible'       => $d['visible'],
-                    FieldsCategories::PK => $d['category'],
-                    'position'      => $d['position']
+                array_values(
+                    array(
+                        'field_id'      => $d['field_id'],
+                        'table_name'    => $d['table_name'],
+                        'required'      => $d['required'],
+                        'visible'       => $d['visible'],
+                        FieldsCategories::PK => $d['category'],
+                        'position'      => $d['position']
+                    )
                 )
             );
         }
